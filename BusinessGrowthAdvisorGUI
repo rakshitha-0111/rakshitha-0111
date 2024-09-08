@@ -1,0 +1,131 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class BusinessGrowthAdvisorGUI {
+    private JFrame frame;
+    private JTextField salesField, growthRateField, trafficField, socialMediaScoreField, budgetField, uiQualityField;
+    private JTextArea resultArea;
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new BusinessGrowthAdvisorGUI().createAndShowGUI());
+    }
+
+    private void createAndShowGUI() {
+        frame = new JFrame("Business Growth Advisor");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(600, 500);
+        frame.setLayout(new BorderLayout());
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new GridLayout(7, 2));
+
+        inputPanel.add(new JLabel("Current Annual Sales (in INR):"));
+        salesField = new JTextField();
+        inputPanel.add(salesField);
+
+        inputPanel.add(new JLabel("Growth Rate (as a percentage):"));
+        growthRateField = new JTextField();
+        inputPanel.add(growthRateField);
+
+        inputPanel.add(new JLabel("Website Traffic (monthly visits):"));
+        trafficField = new JTextField();
+        inputPanel.add(trafficField);
+
+        inputPanel.add(new JLabel("Social Media Engagement Score (1-10):"));
+        socialMediaScoreField = new JTextField();
+        inputPanel.add(socialMediaScoreField);
+
+        inputPanel.add(new JLabel("Budget for Social Media Marketing (in INR):"));
+        budgetField = new JTextField();
+        inputPanel.add(budgetField);
+
+        inputPanel.add(new JLabel("Rate Your UI Quality (1-10):"));
+        uiQualityField = new JTextField();
+        inputPanel.add(uiQualityField);
+
+        JButton analyzeButton = new JButton("Analyze");
+        analyzeButton.addActionListener(new AnalyzeButtonListener());
+
+        inputPanel.add(analyzeButton);
+
+        resultArea = new JTextArea();
+        resultArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(resultArea);
+
+        frame.add(inputPanel, BorderLayout.NORTH);
+        frame.add(scrollPane, BorderLayout.CENTER);
+
+        frame.setVisible(true);
+    }
+
+    private class AnalyzeButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                double currentSales = Double.parseDouble(salesField.getText());
+                double growthRate = Double.parseDouble(growthRateField.getText());
+                int websiteTraffic = Integer.parseInt(trafficField.getText());
+                int socialMediaScore = Integer.parseInt(socialMediaScoreField.getText());
+                double socialMediaBudget = Double.parseDouble(budgetField.getText());
+                int uiQuality = Integer.parseInt(uiQualityField.getText());
+
+                double projectedSales = calculateProjectedSales(currentSales, growthRate);
+                String growthStrategy = determineGrowthStrategy(currentSales, growthRate);
+                String socialMediaAdvice = manageSocialMedia(socialMediaScore, socialMediaBudget);
+                String uiImpactAdvice = evaluateUIImpact(uiQuality);
+
+                resultArea.setText("Business Growth Analysis:\n");
+                resultArea.append(String.format("Projected Annual Sales: %.2f\n", projectedSales));
+                resultArea.append("Recommended Growth Strategy: " + growthStrategy + "\n");
+                resultArea.append("Social Media Management Advice: " + socialMediaAdvice + "\n");
+                resultArea.append("UI Impact on Business: " + uiImpactAdvice + "\n");
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private double calculateProjectedSales(double currentSales, double growthRate) {
+        return currentSales * (1 + growthRate / 100);
+    }
+
+    private String determineGrowthStrategy(double currentSales, double growthRate) {
+        if (growthRate > 10) {
+            return "Consider expanding product lines or entering new markets.";
+        } else if (growthRate > 5) {
+            return "Focus on improving customer retention and optimizing operations.";
+        } else {
+            return "Evaluate your pricing strategy and explore cost reduction opportunities.";
+        }
+    }
+
+    private String manageSocialMedia(int socialMediaScore, double socialMediaBudget) {
+        if (socialMediaScore >= 8) {
+            return "Your social media presence is strong. Continue investing in content and engagement.";
+        } else if (socialMediaScore >= 5) {
+            if (socialMediaBudget > 5000) {
+                return "Increase investment in targeted ads and content marketing to improve engagement.";
+            } else {
+                return "Focus on improving content quality and increasing interaction with your audience.";
+            }
+        } else {
+            if (socialMediaBudget > 5000) {
+                return "Consider a major overhaul of your social media strategy or consulting with an expert.";
+            } else {
+                return "Focus on building a consistent posting schedule and engaging with followers.";
+            }
+        }
+    }
+
+    private String evaluateUIImpact(int uiQuality) {
+        if (uiQuality >= 8) {
+            return "Your UI is likely enhancing user experience and driving conversions positively.";
+        } else if (uiQuality >= 5) {
+            return "Improving UI elements such as navigation and visual appeal could help boost user satisfaction.";
+        } else {
+            return "A major redesign might be necessary to improve user experience and increase engagement.";
+        }
+    }
+}
